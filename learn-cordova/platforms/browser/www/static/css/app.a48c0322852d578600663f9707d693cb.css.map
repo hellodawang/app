@@ -1,0 +1,1 @@
+{"version":3,"sources":["app.a48c0322852d578600663f9707d693cb.css"],"names":[],"mappings":"AACA,YACE,aAAe,AACf,yBAA0B,AAC1B,WAAY,AACZ,kBAAmB,AACnB,iBAAoB,CACrB","file":"app.a48c0322852d578600663f9707d693cb.css","sourcesContent":["\n.hht-header{\n  height: 0.5rem;\n  background-color: #409EFF;\n  color: #fff;\n  text-align: center;\n  line-height: 0.5rem;\n}\n"]}
