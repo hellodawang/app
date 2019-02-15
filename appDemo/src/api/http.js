@@ -12,7 +12,7 @@ axios.defaults.baseURL = process.env.API_ROOT
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
-    if (sessionStorage.token) { 
+    if (sessionStorage.token) {  
       config.headers.Authorization = sessionStorage.token
     }
     return config

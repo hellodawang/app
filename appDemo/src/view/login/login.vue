@@ -25,9 +25,20 @@
           </g>
         </svg>
       </div>
-      <mt-field label="用户名" placeholder="请输入用户名" v-model="username"></mt-field>
-      <mt-field label="邮箱" placeholder="请输入邮箱" type="email" v-model="email"></mt-field>
-      <img :src="captchaUrl" ref="verification"/>
+      <div class="input-box">
+        <label for=""><i class="icon iconfont icon-user"></i></label>
+        <input type="text" placeholder="请输入用户名" v-model="username">
+      </div>
+      <div class="input-box">
+        <label for=""><i class="icon iconfont icon-password"></i></label>
+        <input type="password" placeholder="请输入密码" v-model="password">
+      </div>
+      <div class="input-box verification">
+        <label for=""><i class="icon iconfont icon-verification"></i></label>
+        <input type="text" placeholder="验证码" v-model="verificationCode">
+        <img :src="captchaUrl" />
+      </div>
+      <div class="submit" @click="submit"> 登录</div>
     </div>
   </div>
 </template>
@@ -40,8 +51,8 @@ export default {
   data () {
     return {
       username:'',
-      email:'',
       password:'',
+      verificationCode:'',
       captchaUrl:''
     }
   },
@@ -62,7 +73,116 @@ export default {
 				console.error(error);
 			});
   },
-  methods: {}
+  methods: {
+    submit(){
+      this.$axios({
+        method:'post',
+        url:'/login/login/loginCheck',
+        headers:{'CookieID':this.CookieID},
+        data:{
+          loginName: this.username,
+          passWord: this.password,
+          code: this.verificationCode,	
+        }
+      }).then(response => {
+        switch(response.data.code){
+          // 登陆成功
+          case '0000':
+            sessionStorage.token =  response.data.data.tokenType +" "+ response.data.data.accessToken;
+            sessionStorage.accessToken = response.data.data.accessToken
+            // 请求用户信息
+            return this.$axios.post('/auth/auth/findUserRolePermissions')
+          // // 用户信息不完整  但是仍属于登录成功
+          // case '1000':
+          //   this.token =  response.data.data.tokenType +" "+ response.data.data.accessToken;
+          //   this.accessToken = response.data.data.accessToken;
+          //   sessionStorage.token =  response.data.data.tokenType +" "+ response.data.data.accessToken;
+          //   sessionStorage.accessToken = response.data.data.accessToken
+          //   return this.$axios.post('/userapi/userManager/findSelfInfo')
+          //   break;
+          case "1001":
+            this.refreshVerification()
+            // this.$confirm('登录名称为空或者不符合规范', this.$i18n.t('common.tips'), {
+            //   confirmButtonText: this.$i18n.t('button.determine'),
+            //   type: 'warning'
+            // })
+            break
+          case "1002":
+            this.refreshVerification()
+            // this.$confirm('登录密码为空或者不符合规范', this.$i18n.t('common.tips'), {
+            //   confirmButtonText: this.$i18n.t('button.determine'),
+            //   type: 'warning'
+            // })
+            break
+          case "1003":
+            this.refreshVerification()
+            // this.$confirm('登录验证码为空或者不符合规范', this.$i18n.t('common.tips'), {
+            //   confirmButtonText: this.$i18n.t('button.determine'),
+            //   type: 'warning'
+            // })
+            break
+          case "1004":
+            this.refreshVerification()
+            // this.$confirm(this.$i18n.t('login.incorrectVerificationCode'), this.$i18n.t('common.tips'), {
+            //   confirmButtonText: this.$i18n.t('button.determine'),
+            //   type: 'warning'
+            // })
+            break
+          case "1005":
+            this.refreshVerification()
+            // this.$confirm('客户端身份为空或者不符合规范', this.$i18n.t('common.tips'), {
+            //   confirmButtonText: this.$i18n.t('button.determine'),
+            //   type: 'warning'
+            // })
+            break
+          case "1006":
+            this.refreshVerification()
+            // this.$confirm(this.$i18n.t('login.incorrectUsernameOrPassword'), this.$i18n.t('common.tips'), {
+            //   confirmButtonText: this.$i18n.t('button.determine'),
+            //   type: 'warning'
+            // })
+            break
+          case "9999":
+            this.refreshVerification()
+            // this.$confirm('系统繁忙，请稍后再试', this.$i18n.t('common.tips'), {
+            //   confirmButtonText: this.$i18n.t('button.determine'),
+            //   type: 'warning'
+            // })
+            break
+        }
+      }).then(res => {
+        if(res.config.url == '/userapi/userManager/findSelfInfo'){
+          // this.ruleForm1 = res.data.data;
+          // sessionStorage.token='';
+          // sessionStorage.accessToken=''
+        }else{
+          res.data.data.menuList.sort((a, b) => a.sortCode < b.sortCode ? -1 : 1)
+          let role = res.data.data.role.split(';').join(' ')
+          res.data.data.role = role
+          sessionStorage.setItem('userData',JSON.stringify(res.data.data))				
+          role.match('Company Admin') ? this.checkUserType() : this.$router.push('/gui/index')
+        }	
+      })
+    },
+    refreshVerification(){
+			let that = this
+			this.$axios
+			.get('/login/login/validateCode',{headers:{'CookieID':this.CookieID},responseType:'blob'})
+			.then(function(response) {
+				let reader = new FileReader();
+				reader.onload = function (e) {
+					that.captchaUrl = e.target.result
+				}
+				reader.readAsDataURL(response.data)
+			})
+			.catch(function(error) {
+				console.log(error);
+			});
+    },
+    checkUserType(){
+      
+    }
+  }
 }
 </script>
 
@@ -86,6 +206,47 @@ export default {
       top: 50%;
       margin-left: -3rem;
       margin-top: -4rem;
-      /* text-align: center; */
+    }
+    .input-box{
+      width: 6rem;
+      height: 0.8rem;
+      border-bottom:1px solid #ccc;
+      margin-bottom: 0.3rem;
+      /* border-radius: 4px; */
+    }
+    .input-box input{
+      background:none;  
+      outline:none;  
+      border:0px;
+      height: 0.8rem;
+      color: #f6f6f6
+    }
+    .input-box label{
+      display: inline-block;
+      margin-left: 0.1rem;
+      width: 0.6rem
+    }
+    .input-box .iconfont{
+      color: #f6f6f6;
+      font-size: 0.36rem;
+    }
+    .input-box.verification img{
+      width: 2.8rem;
+      display: inline-block;
+      vertical-align: top
+    }
+    .input-box.verification input{
+      width: 2.3rem;
+    }
+    .submit{
+      text-align: center;
+      width: 6rem;
+      height: 0.6rem;
+      background-color: #409EFF;
+      border-radius: 0.25rem;
+      margin: 0.5rem auto 0;
+      font-size: 0.36rem;
+      line-height: 0.6rem;
+      color: #fff;
     }
 </style>

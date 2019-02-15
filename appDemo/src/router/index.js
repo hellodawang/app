@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '../view/login/login'
+import index from '../view/index/index'
+import statics from '../view/statics/statics'
+import homePage from '../view/homePage/homePage'
 
 Vue.use(Router)
 const router = new Router({
@@ -20,10 +23,27 @@ const router = new Router({
             },
             {
                 path:'/gui/index',
+                component: index,
                 meta: {
                     requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
                 },
-            },
+                children:[
+                    {
+                        path:'/gui/statics',
+                        component: statics,
+                        meta: {
+                            requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
+                        },
+                    },
+                    {
+                        path:'/gui/homePage',
+                        component: homePage,
+                        meta: {
+                            requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
+                        },
+                    },
+                ]
+            }, 
         ]
     })
     router.beforeEach((to, from, next) => {
