@@ -22,11 +22,5 @@ export default {
   height: 100%;
   width: 100%;
 }
-  /* .hht-header{
-    height: 0.5rem;
-    background-color: #409EFF;
-    color: #fff;
-    text-align: center;
-    line-height: 0.5rem;
-  } */
+ 
 </style>

@@ -1,8 +1,6 @@
 <template>
     <div class="homepage-wrapper">
-        <div class="hht-header">
-            鸿合云管理平台
-        </div>
+        <div class="hht-header">鸿合云管理系统</div>
         <div class="content">
             <section class="online">
 

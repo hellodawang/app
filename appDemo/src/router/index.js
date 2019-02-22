@@ -2,7 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '../view/login/login'
 import index from '../view/index/index'
-import statics from '../view/statics/statics'
+import customerService from '../view/customerService/customerService.vue'
+import complaintMessage from '../view/complaintMessage/complaintMessage.vue'
+import me from '../view/me/me.vue'
 import homePage from '../view/homePage/homePage'
 
 Vue.use(Router)
@@ -29,8 +31,8 @@ const router = new Router({
                 },
                 children:[
                     {
-                        path:'/gui/statics',
-                        component: statics,
+                        path:'/gui/customerService',
+                        component: customerService,
                         meta: {
                             requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
                         },
@@ -38,6 +40,27 @@ const router = new Router({
                     {
                         path:'/gui/homePage',
                         component: homePage,
+                        meta: {
+                            requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
+                        },
+                    },
+                    {
+                        path:'/gui/complaintMessage',
+                        component:complaintMessage,
+                        meta: {
+                            requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
+                        },
+                    },
+                    {
+                        path:'/gui/customerService',
+                        component:customerService,
+                        meta: {
+                            requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
+                        },
+                    },
+                    {
+                        path:'/gui/me',
+                        component:me,
                         meta: {
                             requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
                         },

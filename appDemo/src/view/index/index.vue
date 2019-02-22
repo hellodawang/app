@@ -1,5 +1,6 @@
 <template>
     <div class="index-wrapper">
+        
         <router-view/>
         <div class="tabbar">
             <div class="tabbar-item" v-for="item in tabbar" :key="item.id" @click="clickTab(item)" :class="{selected: selected==item.id}">
@@ -13,7 +14,7 @@ export default{
     data(){
         return{
             selected:'index',
-            tabbar:[{id:'index',icon:'index',url:'/gui/homePage'},{id:'statistics',icon:'statistics',url:'/gui/statics'},{id:'message',icon:'message',url:'/gui/homePage'},{id:'user',icon:'user',url:'/gui/homePage'},]
+            tabbar:[{id:'index',icon:'index',url:'/gui/homePage'},{id:'complaintMessage',icon:'message',url:'/gui/complaintMessage'},{id:'customerService',icon:'kefu',url:'/gui/customerService'},{id:'user',icon:'user',url:'/gui/me'},]
         }
     },
     methods:{
@@ -28,6 +29,13 @@ export default{
 }
 </script>
 <style >
+ .hht-header{
+    height: 0.5rem;
+    background-color: #409EFF;
+    color: #fff;
+    text-align: center;
+    line-height: 0.5rem;
+  }
 .index-wrapper{
     height: 100%;
     overflow: scroll
